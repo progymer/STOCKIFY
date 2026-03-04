@@ -36,17 +36,20 @@ export const getDashboardMetrics = async (
                 date: "desc",
             },
         });
-        const expenseByCategorySummary = expenseByCategorySummaryRaw.map((item) => ({
+        const expenseByCategorySummary = expenseByCategorySummaryRaw.map(
+          (item) => ({
             ...item,
-            amount: item.amount. toString()
-        }))
+            amount: item.amount.toString(),
+          }),
+        );
+
         res.json({
-            popularProducts,
-            salesSummary,
-            purchaseSummary,
-            expenseSummary,
-            expenseByCategorySummary
-        })
+          popularProducts,
+          salesSummary,
+          purchaseSummary,
+          expenseSummary,
+          expenseByCategorySummary,
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch dashboard metrics' });
     }
