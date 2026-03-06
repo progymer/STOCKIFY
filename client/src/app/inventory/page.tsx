@@ -1,0 +1,59 @@
+"use client";
+
+import { useGetProductQuery } from "@/state/api";
+import Header from "../(components)/Header";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+
+export default function Inventory() {
+    const columns: GridColDef[] = [
+      { field: "productId", headerName: "ID", width: 90 },
+      { field: "name", headerName: "Product Name", width: 200 },
+      {
+        field: "price",
+        headerName: "Price",
+        width: 110,
+        type: "number",
+        valueGetter: (value, row) => `$${row.price}`,
+      },
+      {
+        field: "rating",
+        headerName: "Rating",
+        width: 110,
+        type: "number",
+        valueGetter: (value, row) => (row.rating ? row.rating : "N/A"),
+      },
+      {
+        field: "stockQuantity",
+        headerName: "Stock Quantity",
+        width: 150,
+        type: "number",
+      },
+    ];
+    
+    const {data: products, isError, isLoading } = useGetProductQuery();
+     
+    if (isLoading) {
+        return <div className="py-4" >Loading...</div>
+    }
+
+    if (isError || !products) {
+        return (
+            <div>
+                Failed to fetch products
+            </div>
+        );
+    }
+
+    return (
+      <div className="flex flex-col">
+        <Header name="Inventory" />
+        <DataGrid
+          rows={products}
+          columns={columns}
+          getRowId={(row) => row.productId}
+          checkboxSelection
+          className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow rounded-lg border border-gray-200 dark:border-gray-700 mt-5 text-gray-700"
+        />
+      </div>
+    );
+}
