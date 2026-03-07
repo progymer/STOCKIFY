@@ -1,0 +1,16 @@
+import { Request, Response } from "express";
+import prisma from "../lib/prisma";
+
+
+export const getUsers = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const users = await prisma.users.findMany();
+        res.json(users)
+
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch dashboard metrics" });
+    }
+}
