@@ -66,13 +66,13 @@ export default function Navbar() {
             </div>
             <hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
             <div className="flex items-center gap-3 cursor-pointer">
-              <Image 
+              <Image
                 src="https://s3-stockify-bucket.s3.eu-north-1.amazonaws.com/profile.jpg"
                 alt="Profile"
-                width={50}
-                height={50}
-                className="rounded-full h-full object-cover"
-              />  
+                width={40}
+                height={40}
+                className="rounded-full object-cover !w-[40px] !h-[40px] mr-2"
+              />
               <span className="font-semibold">Danny</span>
             </div>
           </div>
