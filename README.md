@@ -1,13 +1,19 @@
-# STOCKIFY — Inventory Management System
+# STOCKIFY — Production-Ready Inventory Management Platform
 
-**Live:** [https://master.dxotlt5op7luo.amplifyapp.com](https://master.dxotlt5op7luo.amplifyapp.com)
+A full-stack inventory and sales analytics platform built with Next.js, Express.js, PostgreSQL, and AWS cloud infrastructure.
+
+STOCKIFY helps businesses manage products, monitor inventory, track expenses, and visualize sales performance through an interactive analytics dashboard.
 
 ---
 
-## Demo
+## Live Demo
 
-[![Stockify Demo](https://img.youtube.com/vi/VRFqUQb4c8M/maxresdefault.jpg)](https://youtu.be/VRFqUQb4c8M)
+- Live App: https://master.dxotlt5op7luo.amplifyapp.com
+- Video Demo: https://youtu.be/VRFqUQb4c8M
 
+---
+
+## Preview
 
 <table>
   <tr>
@@ -35,145 +41,152 @@
 
 ---
 
-## Architecture
+# Features
 
-```
-User
- │
- ├──► AWS Amplify (Next.js frontend)
- │         │
- │         ▼
- │    VPC Internet Gateway
- │         │
- │    ┌────▼─────────────────────┐
- │    │  Virtual Private Cloud   │
- │    │                          │
- │    │  ┌── Public Subnet ────┐ │
- │    │  │  Amazon EC2         │ │  ← Express API (Node.js / PM2)
- │    │  │  (backend)          │ │
- │    │  └────────┬────────────┘ │
- │    │           │              │
- │    │  ┌── Private Subnet ──┐  │
- │    │  │  Amazon RDS        │  │  ← PostgreSQL database
- │    │  │  (database)        │  │
- │    │  └────────────────────┘  │
- │    └──────────────────────────┘
- │
- └──► AWS S3 (static assets — images, logo)
-```
-
-- **Frontend** → AWS Amplify (CI/CD from Git)
-- **Backend** → AWS EC2 in a public subnet, security group locked to port `3001`
-- **Database** → AWS RDS PostgreSQL in a private subnet, only reachable from EC2
-- **Assets** → S3 bucket with public read for product images and logo
+- Inventory and product management
+- Sales and purchase tracking
+- Expense monitoring and analytics
+- Interactive dashboard with charts and statistics
+- Search and filtering functionality
+- Persistent UI preferences with Redux Persist
+- Responsive layout for desktop and tablet
+- Cloud deployment with AWS services
 
 ---
 
-## Tech Stack
+# Tech Stack
 
-**Frontend**
-- Next.js 14 (App Router) · TypeScript · Tailwind CSS
-- Redux Toolkit + RTK Query · Redux Persist
-- MUI DataGrid · Recharts · Lucide React
+## Frontend
 
-**Backend**
-- Express.js · TypeScript
-- Prisma v7 + `@prisma/adapter-pg` (driver adapter mode)
-- Helmet · Morgan · CORS · dotenv
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Redux Toolkit + RTK Query
+- Redux Persist
+- MUI DataGrid
+- Recharts
+- Lucide React
 
-**Infrastructure**
-- AWS Amplify · EC2 · RDS (PostgreSQL) · S3 · PM2
+## Backend
 
----
+- Express.js
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- Helmet
+- Morgan
+- CORS
+- dotenv
 
-## Database Schema
+## Infrastructure
 
-```
-Products ──┬──► Sales
-           └──► Purchases
-
-ExpenseSummary ──► ExpenseByCategory
-
-Users
-Expenses
-SalesSummary
-PurchaseSummary
-```
-
-| Table | Key Fields |
-|---|---|
-| `Products` | `productId`, `name`, `price`, `rating`, `stockQuantity` |
-| `Sales` | `saleId`, `productId` (FK), `timestamp`, `quantity`, `unitPrice`, `totalAmount` |
-| `Purchases` | `purchaseId`, `productId` (FK), `timestamp`, `quantity`, `unitCost`, `totalCost` |
-| `Expenses` | `expenseId`, `category`, `amount`, `timestamp` |
-| `SalesSummary` | `salesSummaryId`, `totalValue`, `changePercentage`, `date` |
-| `PurchaseSummary` | `purchaseSummaryId`, `totalPurchased`, `changePercentage`, `date` |
-| `ExpenseSummary` | `expenseSummaryId`, `totalExpenses`, `date` |
-| `ExpenseByCategory` | `expenseByCategoryId`, `expenseSummaryId` (FK), `category`, `amount` (BigInt), `date` |
-| `Users` | `userId`, `name`, `email` |
-
-> `ExpenseByCategory.amount` is stored as `BigInt` in Prisma — serialized to string before sending over JSON.
+- AWS Amplify
+- Amazon EC2
+- Amazon RDS (PostgreSQL)
+- Amazon S3
+- PM2
 
 ---
 
-## API Endpoints
+# Architecture
 
-| Method | Route | Controller |
-|---|---|---|
-| `GET` | `/dashboard` | `getDashboardMetrics` |
-| `GET` | `/products?search=` | `getProducts` |
-| `POST` | `/products` | `createProduct` |
-| `GET` | `/users` | `getUsers` |
-| `GET` | `/expenses` | `getExpensesByCategory` |
+## Infrastructure Overview
 
----
-
-## Project Structure
-
-```
-stockify/
-├── client/
-│   └── src/
-│       ├── app/
-│       │   ├── (components)/     # Navbar, Sidebar, Rating, LoadingSpinner
-│       │   ├── dashboard/        # Cards: Sales, Purchase, Expense, Popular Products, StatCard
-│       │   ├── inventory/        # MUI DataGrid
-│       │   ├── products/         # Product grid + CreateProductModal
-│       │   ├── expenses/         # Pie chart + filters
-│       │   ├── users/            # MUI DataGrid
-│       │   ├── settings/         # Toggle + text settings
-│       │   └── redux.tsx         # Store + PersistGate + StoreProvider
-│       └── state/
-│           ├── api.ts            # RTK Query slice (all endpoints)
-│           └── index.tsx         # Global slice (isDarkMode, isSidebarCollapsed)
-│
-└── server/
-    ├── src/
-    │   ├── controllers/          # dashboardController, productController, etc.
-    │   ├── routes/               # Express routers
-    │   └── lib/prisma.ts         # PrismaClient singleton with PrismaPg adapter
-    ├── prisma/
-    │   ├── schema.prisma
-    │   ├── seed.ts
-    │   └── seedData/             # JSON files for all tables
-    └── ecosystem.config.js       # PM2 config
-```
+- Frontend deployed on AWS Amplify with CI/CD connected to GitHub
+- Backend hosted on Amazon EC2 using PM2
+- PostgreSQL database hosted on Amazon RDS in a private subnet
+- Product images and assets stored in Amazon S3
+- Environment variables managed securely across services
 
 ---
 
-## Local Setup
+# Engineering Highlights
 
-### Server
+- Built a scalable full-stack architecture using separate frontend and backend services
+- Implemented RTK Query caching for efficient API data fetching
+- Used Prisma with PostgreSQL driver adapters for improved database connectivity
+- Configured AWS RDS inside a private subnet accessible only through EC2 security groups
+- Added Redux Persist to preserve user UI preferences
+- Created reusable dashboard and chart components for analytics visualization
+- Structured backend using controllers and route-based architecture
+- Configured PM2 for backend process management and reliability
+- Automated frontend deployment through AWS Amplify CI/CD pipelines
+
+---
+
+# Data Model
+
+Core entities include:
+
+- Products
+- Sales
+- Purchases
+- Expenses
+- Users
+- Analytics summaries
+
+Relationships:
+- Products are connected to sales and purchases
+- Expense summaries aggregate categorized expenses
+- Analytics tables provide dashboard metrics and reporting
+
+---
+
+# Challenges & Solutions
+
+## Handling BigInt Serialization
+
+PostgreSQL BigInt values returned by Prisma are not directly JSON serializable.
+
+Implemented transformation logic before API responses to safely serialize BigInt values and prevent runtime errors.
+
+## Secure Database Networking
+
+Configured Amazon RDS inside a private subnet and restricted database access exclusively through EC2 security groups.
+
+## State Management Optimization
+
+Used RTK Query caching and centralized Redux state management to reduce redundant API requests and simplify frontend data flow.
+
+---
+
+# Project Structure
 
 ```bash
-cd server && npm install
+stockify/
+├── client/     # Next.js frontend
+├── server/     # Express API + Prisma
+└── screenshots/
 ```
 
-`.env`:
+---
+
+# Local Development
+
+## Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd stockify
+```
+
+---
+
+## Backend Setup
+
+```bash
+cd server
+npm install
+```
+
+Create a `.env` file:
+
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DB
 PORT=3001
 ```
+
+Run migrations and start the server:
 
 ```bash
 npx prisma migrate deploy
@@ -182,16 +195,22 @@ npm run seed
 npm run dev
 ```
 
-### Client
+---
+
+## Frontend Setup
 
 ```bash
-cd client && npm install
+cd client
+npm install
 ```
 
-`.env.local`:
+Create a `.env.local` file:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
+
+Start the frontend:
 
 ```bash
 npm run dev
@@ -199,19 +218,25 @@ npm run dev
 
 ---
 
-## Deployment
+# Deployment
 
-### Amplify (Frontend)
-- Connected to Git repo, auto-deploys on push
-- Set `NEXT_PUBLIC_API_URL` in Amplify Console → Environment variables
+## Frontend — AWS Amplify
 
-### EC2 (Backend)
+- Connected to GitHub for automatic deployments
+- Environment variables configured through Amplify Console
+
+## Backend — Amazon EC2
+
 ```bash
-npm run build          # compiles TS → dist/
+npm run build
 pm2 start ecosystem.config.js
-pm2 save && pm2 startup
+pm2 save
+pm2 startup
 ```
 
-### RDS
-- Private subnet, port `5432` open only to EC2 security group
-- `DATABASE_URL` set as environment variable on EC2
+## Database — Amazon RDS
+
+- PostgreSQL deployed in a private subnet
+- Access restricted to EC2 security group only
+
+---
