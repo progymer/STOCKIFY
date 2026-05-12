@@ -166,7 +166,7 @@ stockify/
 ## Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/progymer/STOCKIFY.git
 cd stockify
 ```
 
